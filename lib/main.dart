@@ -3,6 +3,7 @@ import 'package:flutter_demo/app_state.dart';
 import 'package:flutter_demo/services/local_storage/local_storage.dart';
 import 'package:flutter_demo/services/service_locator.dart';
 import 'package:flutter_demo/theme.dart';
+import 'package:flutter_demo/ui/demos/10_audio/just_audio.dart';
 import 'package:flutter_demo/ui/demos/2_widget_layout/widgets_layout_demo.dart';
 import 'package:flutter_demo/ui/demos/3_state_managment/state_management_demo.dart';
 import 'package:flutter_demo/ui/demos/4_user_login/login_screen.dart';
@@ -184,6 +185,16 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const PaintingDemo()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text("10. Audio"),
+            leading: const Icon(Icons.code),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AudioApp()),
               );
             },
           ),

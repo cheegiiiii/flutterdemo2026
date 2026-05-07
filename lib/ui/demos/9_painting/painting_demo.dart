@@ -14,26 +14,104 @@ class PaintingDemo extends StatefulWidget {
   State<PaintingDemo> createState() => _PaintingDemoState();
 }
 
+// class _PaintingDemoState extends State<PaintingDemo> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(),
+//       // body: Center(
+//       //   child: Container(
+//       //     // color: Colors.cyan,
+//       //     child: ProgressBar(
+//       //       barColor: Colors.blue,
+//       //       thumbColor: Colors.red,
+//       //       thumbSize: 20.0,
+//       //     ),
+//       //   ),
+//       // ),
+//       body: Center(
+//         child: Container(
+//           decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
+//           child: CustomPaint(size: Size(300, 300), painter: MyPainter()),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class MyPainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final path = Path()
+//       ..moveTo(50, 50)
+//       // ..lineTo(200, 200)
+//       // ..quadraticBezierTo(30, 150, 150, 100)
+//       // ..quadraticBezierTo(270, 50, 240, 150);
+//       ..cubicTo(30, 150, 270, 50, 240, 150);
+
+//     final paint = Paint()
+//       ..color = Colors.black
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = 4;
+//     canvas.drawPath(path, paint);
+//   }
+
 class _PaintingDemoState extends State<PaintingDemo> {
+  Offset startPoint = const Offset(50, 50);
+  Offset controlPoint1 = const Offset(30, 150); // BLUE
+  Offset controlPoint2 = const Offset(270, 50); // RED
+  Offset endPoint = const Offset(240, 150);
+
+  int? selectedPoint;
+
+  void _selectPoint(Offset tapPosition) {
+    const radius = 25.0;
+
+    if ((tapPosition - controlPoint1).distance <= radius) {
+      selectedPoint = 1;
+    } else if ((tapPosition - controlPoint2).distance <= radius) {
+      selectedPoint = 2;
+    } else {
+      selectedPoint = null;
+    }
+  }
+
+  void _movePoint(Offset position) {
+    setState(() {
+      if (selectedPoint == 1) {
+        controlPoint1 = position;
+      } else if (selectedPoint == 2) {
+        controlPoint2 = position;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
-      // body: Center(
-      //   child: Container(
-      //     // color: Colors.cyan,
-      //     child: ProgressBar(
-      //       barColor: Colors.blue,
-      //       thumbColor: Colors.red,
-      //       thumbSize: 20.0,
-      //     ),
-      //   ),
-      // ),
+      appBar: AppBar(title: const Text("Bezier Control Points")),
       body: Center(
         child: Container(
           decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-          child: CustomPaint(size: Size(300, 300), painter: MyPainter()),
+          child: GestureDetector(
+            onPanStart: (details) {
+              _selectPoint(details.localPosition);
+            },
+            onPanUpdate: (details) {
+              _movePoint(details.localPosition);
+            },
+            child: CustomPaint(
+              size: const Size(300, 300),
+              painter: MyPainter(
+                startPoint: startPoint,
+                controlPoint1: controlPoint1,
+                controlPoint2: controlPoint2,
+                endPoint: endPoint,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -41,26 +119,72 @@ class _PaintingDemoState extends State<PaintingDemo> {
 }
 
 class MyPainter extends CustomPainter {
+  MyPainter({
+    required this.startPoint,
+    required this.controlPoint1,
+    required this.controlPoint2,
+    required this.endPoint,
+  });
+
+  final Offset startPoint;
+  final Offset controlPoint1;
+  final Offset controlPoint2;
+  final Offset endPoint;
+
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path()
-      ..moveTo(50, 50)
-      // ..lineTo(200, 200)
-      // ..quadraticBezierTo(30, 150, 150, 100)
-      // ..quadraticBezierTo(270, 50, 240, 150);
-      ..cubicTo(30, 150, 270, 50, 240, 150);
+      ..moveTo(startPoint.dx, startPoint.dy)
+      ..cubicTo(
+        controlPoint1.dx,
+        controlPoint1.dy,
+        controlPoint2.dx,
+        controlPoint2.dy,
+        endPoint.dx,
+        endPoint.dy,
+      );
 
-    final paint = Paint()
+    final curvePaint = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
-    canvas.drawPath(path, paint);
+
+    canvas.drawPath(path, curvePaint);
+
+    // Helper lines
+    // final helperPaint = Paint()
+    //   ..color = Colors.grey
+    //   ..strokeWidth = 1;
+
+    // canvas.drawLine(startPoint, controlPoint1, helperPaint);
+    // canvas.drawLine(endPoint, controlPoint2, helperPaint);
+
+    // Blue control point
+    final bluePaint = Paint()..color = Colors.blue;
+    canvas.drawCircle(controlPoint1, 6, bluePaint);
+
+    // Red control point
+    final redPaint = Paint()..color = Colors.red;
+    canvas.drawCircle(controlPoint2, 6, redPaint);
+
+    // Start and end points
+    // final blackPaint = Paint()..color = Colors.black;
+    // canvas.drawCircle(startPoint, 6, blackPaint);
+    // canvas.drawCircle(endPoint, 6, blackPaint);
   }
 
   @override
-  bool shouldRepaint(CustomPainter old) {
-    return false;
+  bool shouldRepaint(MyPainter oldDelegate) {
+    return oldDelegate.controlPoint1 != controlPoint1 ||
+        oldDelegate.controlPoint2 != controlPoint2 ||
+        oldDelegate.startPoint != startPoint ||
+        oldDelegate.endPoint != endPoint;
   }
+}
+
+@override
+bool shouldRepaint(CustomPainter old) {
+  return false;
 }
 
 class ProgressBar extends LeafRenderObjectWidget {
