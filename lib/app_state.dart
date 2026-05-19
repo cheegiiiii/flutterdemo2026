@@ -8,6 +8,9 @@ class AppState extends ChangeNotifier {
   ThemeMode _theme = ThemeMode.system;
   ThemeMode get theme => _theme;
 
+  Locale _locale = Locale('en');
+  Locale get locale => _locale;
+
   Future<void> init() async {
     _theme = localStorage.getTheme();
     notifyListeners();
@@ -16,6 +19,12 @@ class AppState extends ChangeNotifier {
   Future<void> setThemeMode(ThemeMode theme) async {
     _theme = theme;
     await localStorage.setTheme(theme);
+    notifyListeners();
+  }
+
+  Future<void> setLocale(Locale locale) async {
+    _locale = locale;
+    await localStorage.setLocale(locale);
     notifyListeners();
   }
 }

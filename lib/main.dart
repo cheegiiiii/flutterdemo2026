@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/app_state.dart';
+import 'package:flutter_demo/l10n/app_localizations.dart';
 import 'package:flutter_demo/services/local_storage/local_storage.dart';
 import 'package:flutter_demo/services/service_locator.dart';
 import 'package:flutter_demo/theme.dart';
 import 'package:flutter_demo/ui/demos/10_audio/just_audio.dart';
+import 'package:flutter_demo/ui/demos/12_permissions/permissions_demo.dart';
 import 'package:flutter_demo/ui/demos/2_widget_layout/widgets_layout_demo.dart';
 import 'package:flutter_demo/ui/demos/3_state_managment/state_management_demo.dart';
 import 'package:flutter_demo/ui/demos/4_user_login/login_screen.dart';
@@ -13,6 +15,8 @@ import 'package:flutter_demo/ui/demos/6_networking/networking_demo.dart';
 import 'package:flutter_demo/ui/demos/7_testing/testing_demo.dart';
 import 'package:flutter_demo/ui/demos/8_profiling/profiling_demo.dart';
 import 'package:flutter_demo/ui/demos/9_painting/painting_demo.dart';
+import 'package:flutter_demo/ui/demos/11_animations/animations_demo.dart';
+import 'package:flutter_demo/ui/demos/13_localization/localization_demo.dart';
 import 'package:flutter_demo/ui/settings/settings_screen.dart';
 import 'ui/demos/1_dart/dart_demo_screen.dart';
 
@@ -47,6 +51,9 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: appState.locale,
           theme: materialTheme.light(),
           darkTheme: materialTheme.dark(),
           themeMode: appState.theme,
@@ -195,6 +202,40 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AudioApp()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text("11. Animations"),
+            leading: const Icon(Icons.code),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AnimationDemo()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text("12. Permissions"),
+            leading: const Icon(Icons.code),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PermissionsDemo(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text("13. Localization"),
+            leading: const Icon(Icons.code),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LocalizationDemo(),
+                ),
               );
             },
           ),
